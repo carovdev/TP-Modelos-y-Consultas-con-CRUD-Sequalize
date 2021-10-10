@@ -2,6 +2,7 @@
 require('dotenv').config()
 const express = require('express');
 const path = require('path');
+const methodOverride = require("method-override");
 
 const indexRouter = require('./routes/index');
 
@@ -13,14 +14,18 @@ const app = express();
 const dbConnectionTest = require('./utils/dbConnectionTest')
 dbConnectionTest();
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
 // view engine setup
 app.set('views', path.resolve(__dirname, './views'));
 app.set('view engine', 'ejs');
 
 app.use(express.static(path.resolve(__dirname, '../public')));
 
+app.use(methodOverride('_method'));
 app.use('/', indexRouter);
-app.use(moviesRoutes);
-app.use(genresRoutes);
+app.use('/movies',moviesRoutes);
+app.use('/genres',genresRoutes);
 
 app.listen('3001', () => console.log('Servidor corriendo en el puerto 3001'));
